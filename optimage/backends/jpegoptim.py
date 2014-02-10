@@ -8,8 +8,9 @@ __all__ = ['JpegOptim']
 
 
 class JpegOptim(BaseImageOptimizer):
+    priority = 10
     provider = 'jpegoptim'
     output_format = 'jpeg'
     content_types = ['image/jpeg']
     command = find_executable_path('jpegoptim')
-    options = ['--strip-all', '--all-normal', '-o', '-q']
+    options = ['--strip-all', '-o', '-q']

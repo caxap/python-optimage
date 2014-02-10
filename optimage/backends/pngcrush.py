@@ -8,9 +8,10 @@ __all__ = ['PngCrush']
 
 
 class PngCrush(BaseImageOptimizer):
+    priority = 10
     provider = 'pngcrush'
     output_format = 'png'
     content_types = ['image/png']
     output_temp_file = True
     command = find_executable_path('pngcrush')
-    options = ['-rem', 'allb', '-reduce', '-q']  # , '-brute']
+    options = ['-rem', 'alla', '-brute', '-reduce', '-q']

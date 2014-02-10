@@ -20,6 +20,7 @@ logger = logging.getLogger('optimage')
 class BaseImageOptimizer(object):
 
     provider = None
+    priority = 0
     output_format = None
     # Supported input content types, for now it should correspond with output_format
     content_types = []

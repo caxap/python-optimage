@@ -8,11 +8,12 @@ __all__ = ['JPEGtran']
 
 
 class JPEGtran(BaseImageOptimizer):
+    priority = 20
     provider = 'jpegtran'
     output_format = 'jpeg'
     content_types = ['image/jpeg']
     command = find_executable_path('jpegtran')
-    options = ['-copy', 'none', '-progressive']
+    options = ['-optimise', '-copy', 'none', '-progressive']
     output_temp_file = True
 
     def _build_command(self):

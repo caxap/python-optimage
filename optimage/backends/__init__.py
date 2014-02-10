@@ -4,11 +4,8 @@
 import inspect
 import mimetypes
 
-from .optipng import OptiPng
 from .pngcrush import PngCrush
-from .pngout import PngOut
 from .pngnq import PngNQ
-from .pngquant import PngQuant
 from .jpegoptim import JpegOptim
 from .jpegtran import JPEGtran
 from .gifsicle import Gifsicle
@@ -16,15 +13,14 @@ from .gifsicle import Gifsicle
 __all__ = ['get_backends_for_content_type']
 
 
-# TODO: use autodiscover function for backends classes
-_default_backend_classes = [
-    PngNQ,
-    PngQuant,
-    OptiPng,
-    PngCrush,
-    PngOut,
-    JpegOptim,
-    JPEGtran,
+default_backend_classes = [
+    # image/png
+    PngNQ, PngCrush,
+
+    # image/jpeg
+    JpegOptim, JPEGtran,
+
+    # image/gif
     Gifsicle,
 ]
 
@@ -38,7 +34,7 @@ def get_backends_for_content_type(input_name, content_type=None,
         return []
 
     if not backend_classes:
-        backend_classes = _default_backend_classes
+        backend_classes = default_backend_classes
 
     backends = []
     for cls in backend_classes:
@@ -46,4 +42,5 @@ def get_backends_for_content_type(input_name, content_type=None,
                 content_type in cls.content_types):
             backends.append(cls(input_name, **kwargs))
 
+    backends.sort(key=lambda x: x.priority, reverse=True)
     return backends

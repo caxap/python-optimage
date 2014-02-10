@@ -8,6 +8,7 @@ __all__ = ['Gifsicle']
 
 
 class Gifsicle(BaseImageOptimizer):
+    priority = 10
     provider = 'gifsicle'
     output_format = 'gif'
     content_types = ['image/gif']

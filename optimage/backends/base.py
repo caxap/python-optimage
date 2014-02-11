@@ -55,28 +55,34 @@ class BaseImageOptimizer(object):
         else:
             return cmd + [self.output_name]
 
-    def optimize(self):
-        self.input_size = file_size(self.input_name)
-        self.output_name = self._output_file_name()
-
+    def _execute_command(self):
         try:
             subprocess.check_call(self._build_command())
+            return True
         except subprocess.CalledProcessError as e:
             logger.error("Failed to execute '%s' (exit status %s)" %
                          (e.cmd, e.returncode))
         except IOError as e:
             logger.error("Failed to process file '%s' (%s)" %
                          (e.filename, e.strerror))
+        return False
 
-        else:
+    def optimize(self):
+        self.input_size = file_size(self.input_name)
+        self.output_name = self._output_file_name()
+
+        if self._execute_command():
             if self.input_size > file_size(self.output_name):
                 try:
                     shutil.copyfile(self.output_name, self.input_name)
                 except IOError as e:
                     logger.error("Failed to copy optimized file '%s' (%s)" %
                                  (e.filename, e.strerror))
+        self._cleanup()
 
-        try:
-            os.remove(self.output_name)
-        except OSError:
-            pass
+    def _cleanup(self):
+        if self.output_name:
+            try:
+                os.remove(self.output_name)
+            except OSError:
+                pass

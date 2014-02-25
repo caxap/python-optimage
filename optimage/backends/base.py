@@ -6,8 +6,11 @@ import tempfile
 import shutil
 import logging
 import subprocess
+import mimetypes
 
 from ..utils import file_size
+from ..filetypes import mime_from_file
+
 
 __all__ = ['BaseImageOptimizer']
 
@@ -28,6 +31,16 @@ class BaseImageOptimizer(object):
     inline = True
     command = []
     options = []
+
+    @classmethod
+    def can_optimize(cls, input_name, validate=True):
+        if validate:
+            if not os.path.exist(input_name):
+                return False
+            mimetype = mime_from_file(input_name)
+        else:
+            mimetype = mimetypes.guess_type(input_name)
+        return mimetype in cls.content_types
 
     def _output_file_name(self):
         ext = '.' + self.output_format
@@ -75,10 +88,14 @@ class BaseImageOptimizer(object):
         return False
 
     def optimize(self, input_name):
+        self.optimized = False
+
+        if not self.can_optimize(input_name):
+            return self.optimized
+
         self.input_name = input_name
         self.input_size = file_size(self.input_name)
         self.output_name = self._output_file_name()
-        self.optimized = False
 
         if self._execute_command():
             self.optimized = self._maybe_copyfile()

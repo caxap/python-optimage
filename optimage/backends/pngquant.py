@@ -13,6 +13,7 @@ class PngQuant(BaseImageOptimizer):
     provider = 'pngquant'
     output_format = 'png'
     content_types = ['image/png']
+    inline = False
     command = find_executable_path('pngquant')
     _q8_suffix = '-optimage-q8.png'
     options = ['-f', '--ext', _q8_suffix, '--speed', '5']

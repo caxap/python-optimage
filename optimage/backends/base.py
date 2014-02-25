@@ -25,16 +25,13 @@ class BaseImageOptimizer(object):
     # Supported input content types, for now it should correspond with output_format
     content_types = []
     # Should be true for providers that don't support inline optimisation
-    output_temp_file = False
+    inline = True
     command = []
     options = []
 
-    def __init__(self, input_name):
-        self.input_name = input_name
-
     def _output_file_name(self):
         ext = '.' + self.output_format
-        if self.output_temp_file:
+        if not self.inline:
             output = tempfile.NamedTemporaryFile(prefix=OPTIMAGE_TMP_PREFIX,
                                                  suffix=ext,
                                                  delete=False)
@@ -50,7 +47,7 @@ class BaseImageOptimizer(object):
 
     def _build_command(self, *args):
         cmd = [self.command] + self.options
-        if self.output_temp_file:
+        if not self.inline:
             return cmd + [self.input_name, self.output_name]
         else:
             return cmd + [self.output_name]
@@ -67,18 +64,28 @@ class BaseImageOptimizer(object):
                          (e.filename, e.strerror))
         return False
 
-    def optimize(self):
+    def _maybe_copyfile(self):
+        if self.input_size > file_size(self.output_name):
+            try:
+                shutil.copyfile(self.output_name, self.input_name)
+                return True
+            except IOError as e:
+                logger.error("Failed to copy optimized file '%s' (%s)" %
+                             (e.filename, e.strerror))
+        return False
+
+    def optimize(self, input_name):
+        self.input_name = input_name
         self.input_size = file_size(self.input_name)
         self.output_name = self._output_file_name()
+        self.optimized = False
 
         if self._execute_command():
-            if self.input_size > file_size(self.output_name):
-                try:
-                    shutil.copyfile(self.output_name, self.input_name)
-                except IOError as e:
-                    logger.error("Failed to copy optimized file '%s' (%s)" %
-                                 (e.filename, e.strerror))
+            self.optimized = self._maybe_copyfile()
+
         self._cleanup()
+
+        return self.optimized
 
     def _cleanup(self):
         if self.output_name:

@@ -12,6 +12,6 @@ class PngCrush(BaseImageOptimizer):
     provider = 'pngcrush'
     output_format = 'png'
     content_types = ['image/png']
-    output_temp_file = True
+    inline = False
     command = find_executable_path('pngcrush')
     options = ['-rem', 'alla', '-brute', '-reduce', '-q']

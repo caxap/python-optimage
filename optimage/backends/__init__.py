@@ -40,7 +40,7 @@ def get_backends_for_content_type(input_name, content_type=None,
     for cls in backend_classes:
         if (inspect.isclass(cls) and hasattr(cls, 'content_types') and
                 content_type in cls.content_types):
-            backends.append(cls(input_name, **kwargs))
+            backends.append(cls(**kwargs))
 
     backends.sort(key=lambda x: x.priority, reverse=True)
     return backends

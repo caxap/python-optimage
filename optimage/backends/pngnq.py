@@ -14,6 +14,7 @@ class PngNQ(BaseImageOptimizer):
     provider = 'pngnq'
     output_format = 'png'
     content_types = ['image/png']
+    inline = False
     command = find_executable_path('pngnq')
     _nq8_suffix = '-optimage-nq8.png'
     options = ['-n', '256', '-f', '-Qf', '-s5', '-e%s' % _nq8_suffix]

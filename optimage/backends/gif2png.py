@@ -46,6 +46,7 @@ class AnimatedGif2Png(BaseImageOptimizer):
     priority = 100
     output_format = 'png'
     content_types = ['image/gif']
+    inline = False
     command = find_executable_path('convert')
     options = []
 

@@ -12,9 +12,9 @@ class JPEGtran(BaseImageOptimizer):
     provider = 'jpegtran'
     output_format = 'jpeg'
     content_types = ['image/jpeg']
+    inline = False
     command = find_executable_path('jpegtran')
     options = ['-optimise', '-copy', 'none', '-progressive']
-    output_temp_file = True
 
     def _build_command(self):
         return [self.command] + self.options + \

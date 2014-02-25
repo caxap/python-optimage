@@ -11,6 +11,6 @@ class PngOut(BaseImageOptimizer):
     provider = 'pngout'
     output_format = 'png'
     content_types = ['image/png']
-    output_temp_file = True
+    inline = False
     command = find_executable_path('pngout')
     options = ['-y', '-q']

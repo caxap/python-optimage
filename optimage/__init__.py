@@ -13,4 +13,4 @@ def optimize(input_name, content_type=None, **kwargs):
         input_name, content_type=content_type, **kwargs)
 
     for backend in backends:
-        backend.optimize()
+        backend.optimize(input_name)
